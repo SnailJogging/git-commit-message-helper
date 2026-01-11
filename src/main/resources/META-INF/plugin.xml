@@ -1,0 +1,70 @@
+<idea-plugin>
+    <id>com.github.gitcommithelper</id>
+    <name>Git Commit Message Helper</name>
+    <vendor email="support@example.com" url="https://github.com/yourusername/git-commit-message-helper">Your Name</vendor>
+
+    <description><![CDATA[
+    <p>A smart Git commit message helper that assists developers in writing standardized commit messages.</p>
+
+    <h3>Features:</h3>
+    <ul>
+        <li>Automatic commit message template generation based on file changes</li>
+        <li>Commit message format validation (Conventional Commits support)</li>
+        <li>Smart suggestions based on change analysis and commit history</li>
+        <li>Real-time format checking with helpful error messages</li>
+        <li>Support for custom commit message conventions</li>
+    </ul>
+
+    <h3>Supported Commit Types:</h3>
+    <ul>
+        <li><b>feat</b>: New features</li>
+        <li><b>fix</b>: Bug fixes</li>
+        <li><b>docs</b>: Documentation updates</li>
+        <li><b>style</b>: Code style changes</li>
+        <li><b>refactor</b>: Code refactoring</li>
+        <li><b>test</b>: Test additions or modifications</li>
+        <li><b>chore</b>: Build process or auxiliary tool changes</li>
+    </ul>
+    ]]></description>
+
+    <change-notes><![CDATA[
+    <h3>Version 1.0.0</h3>
+    <ul>
+        <li>Initial release</li>
+        <li>Automatic commit message template generation</li>
+        <li>Format validation for Conventional Commits</li>
+        <li>File change analysis</li>
+    </ul>
+    ]]></change-notes>
+
+    <!-- Product and plugin compatibility requirements -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>Git4Idea</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Commit message provider -->
+        <vcsCheckinHandlerFactory implementation="com.github.gitcommithelper.service.CommitMessageProviderFactory"/>
+
+        <!-- Settings page -->
+        <projectConfigurable
+            parentId="tools"
+            instance="com.github.gitcommithelper.ui.SettingsConfigurable"
+            id="com.github.gitcommithelper.ui.SettingsConfigurable"
+            displayName="Git Commit Message Helper"/>
+
+        <!-- Application service -->
+        <applicationService
+            serviceImplementation="com.github.gitcommithelper.service.GitAnalysisService"/>
+    </extensions>
+
+    <actions>
+        <!-- Add action to Git commit dialog -->
+        <action id="com.github.gitcommithelper.action.GenerateCommitMessageAction"
+                class="com.github.gitcommithelper.action.GenerateCommitMessageAction"
+                text="Generate Commit Message"
+                description="Generate a commit message based on file changes"
+                icon="AllIcons.Actions.Lightning">
+            <add-to-group group-id="Vcs.MessageActionGroup" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
