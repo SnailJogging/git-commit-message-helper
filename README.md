@@ -1,8 +1,9 @@
 # Git Commit Message Helper
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/Git.Commit.Message.Helper)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/SnailJogging/git-commit-message-helper/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-IntelliJ%20IDEA-green.svg)](https://www.jetbrains.com/idea/)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
+[![Download](https://img.shields.io/badge/download-latest-success.svg)](https://github.com/SnailJogging/git-commit-message-helper/releases/latest)
 
 一个强大的 IntelliJ IDEA 插件，帮助开发者自动生成规范化的 Git 提交信息，支持 AI 增强和多语言。
 
@@ -26,14 +27,16 @@ A powerful IntelliJ IDEA plugin that helps developers automatically generate sta
 
 ### 1. 安装插件
 
-**从 JetBrains Marketplace 安装**（推荐）：
+**从 GitHub Release 下载**（推荐）：
+- 访问 [Releases 页面](https://github.com/SnailJogging/git-commit-message-helper/releases/latest)
+- 下载 `git-commit-message-helper-1.0.0.zip`
+- `Settings/Preferences` → `Plugins` → ⚙️ → `Install Plugin from Disk`
+- 选择下载的 zip 文件并重启 IDEA
+
+**从 JetBrains Marketplace 安装**（即将上线）：
 - `Settings/Preferences` → `Plugins` → `Marketplace`
 - 搜索 "Git Commit Message Helper"
 - 点击 `Install`
-
-**从磁盘安装**（本地构建）：
-- 下载或构建插件 `.zip` 文件
-- `Settings/Preferences` → `Plugins` → ⚙️ → `Install Plugin from Disk`
 
 详细安装说明请参阅 [INSTALLATION.md](INSTALLATION.md)
 
