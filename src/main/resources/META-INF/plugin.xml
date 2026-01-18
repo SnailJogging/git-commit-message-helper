@@ -4,15 +4,29 @@
     <vendor email="support@example.com" url="https://github.com/yourusername/git-commit-message-helper">Your Name</vendor>
 
     <description><![CDATA[
-    <p>A smart Git commit message helper that assists developers in writing standardized commit messages.</p>
+    <p>A smart Git commit message helper with AI enhancement that assists developers in writing standardized commit messages.</p>
 
     <h3>Features:</h3>
     <ul>
+        <li><b>AI-Enhanced Generation</b>: Integrate with OpenAI, Claude, DeepSeek, or local Ollama to generate intelligent commit messages</li>
         <li>Automatic commit message template generation based on file changes</li>
         <li>Commit message format validation (Conventional Commits support)</li>
-        <li>Smart suggestions based on change analysis and commit history</li>
+        <li>Smart suggestions based on change analysis and git diff</li>
         <li>Real-time format checking with helpful error messages</li>
         <li>Support for custom commit message conventions</li>
+        <li>Fallback mechanism for reliable operation</li>
+    </ul>
+
+    <h3>AI Providers Supported:</h3>
+    <ul>
+        <li>OpenAI GPT (GPT-4, GPT-3.5)</li>
+        <li>Claude (Anthropic)</li>
+        <li>DeepSeek</li>
+        <li>智谱 AI (ChatGLM)</li>
+        <li>阿里通义千问 (Qwen)</li>
+        <li>Azure OpenAI</li>
+        <li>Ollama (Local models)</li>
+        <li>Custom endpoints</li>
     </ul>
 
     <h3>Supported Commit Types:</h3>
@@ -31,9 +45,12 @@
     <h3>Version 1.0.0</h3>
     <ul>
         <li>Initial release</li>
+        <li>AI-enhanced commit message generation (OpenAI, Claude, DeepSeek support)</li>
         <li>Automatic commit message template generation</li>
         <li>Format validation for Conventional Commits</li>
-        <li>File change analysis</li>
+        <li>File change analysis with git diff integration</li>
+        <li>Configurable AI providers with test connection</li>
+        <li>Smart fallback mechanism</li>
     </ul>
     ]]></change-notes>
 
@@ -52,9 +69,11 @@
             id="com.github.gitcommithelper.ui.SettingsConfigurable"
             displayName="Git Commit Message Helper"/>
 
-        <!-- Application service -->
+        <!-- Application services -->
         <applicationService
             serviceImplementation="com.github.gitcommithelper.service.GitAnalysisService"/>
+        <applicationService
+            serviceImplementation="com.github.gitcommithelper.settings.PluginSettings"/>
     </extensions>
 
     <actions>

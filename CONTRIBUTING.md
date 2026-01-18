@@ -298,8 +298,10 @@ public void testValidate_EmptyMessage_ReturnsError() {
 如果你的更改影响用户体验，更新：
 
 - `README.md` - 如果影响主要功能
-- `USAGE_GUIDE.md` - 如果影响使用方法
-- `CHANGELOG.md` - 记录所有更改
+- `USER_GUIDE.md` - 如果影响使用方法
+- `CHANGELOG.md` - 记录所有更改（必需）
+- `FAQ.md` - 如果解决了常见问题
+- `DEVELOPMENT.md` - 如果影响开发流程
 
 ### 发布流程
 
@@ -342,18 +344,37 @@ src/
 
 ## 开发环境设置
 
+详细的开发环境设置请参阅 [DEVELOPMENT.md](DEVELOPMENT.md)。
+
 ### 必需工具
 
 - JDK 17+
 - IntelliJ IDEA 2023.2+
-- Git
-- Gradle 8.0+ (或使用 wrapper)
+- Git 2.0+
+- Gradle 8.5+ (项目包含 wrapper)
 
 ### 推荐工具
 
 - IntelliJ IDEA Ultimate（更好的插件开发支持）
-- Gradle 构建扫描插件
+- Postman 或 curl（测试 AI API）
 - SonarLint（代码质量检查）
+
+### 快速开始
+
+```bash
+# 1. 克隆项目
+git clone https://github.com/yourusername/Git.Commit.Message.Helper.git
+cd Git.Commit.Message.Helper
+
+# 2. 构建项目
+./gradlew buildPlugin
+
+# 3. 运行开发环境
+./gradlew runIde
+
+# 4. 运行测试
+./gradlew test
+```
 
 ### IDE 配置
 

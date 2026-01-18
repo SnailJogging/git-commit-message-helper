@@ -1,5 +1,11 @@
 package com.github.gitcommithelper.ui;
 
+import com.github.gitcommithelper.ai.AIProvider;
+import com.github.gitcommithelper.ai.AIProviderFactory;
+import com.github.gitcommithelper.ai.AIProviderType;
+import com.github.gitcommithelper.settings.PluginSettings;
+import com.intellij.openapi.ui.Messages;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -14,9 +20,29 @@ public class SettingsPanel {
     private JSpinner maxSubjectLengthSpinner;
     private JTextArea customTypesTextArea;
 
+    // AI settings
+    private JCheckBox enableAICheckBox;
+    private JComboBox<AIProviderType> aiProviderComboBox;
+    private JTextField apiKeyField;
+    private JTextField apiEndpointField;
+    private JTextField modelField;
+    private JSpinner maxTokensSpinner;
+    private JSpinner temperatureSpinner;
+    private JSpinner timeoutSpinner;
+    private JCheckBox enableCachingCheckBox;
+    private JCheckBox fallbackToBasicCheckBox;
+    private JButton testConnectionButton;
+    private JTextArea promptTemplateArea;
+    private JButton resetPromptButton;
+    private JComboBox<String> languageComboBox;
+
+    private JPanel aiSettingsPanel;
+
+    private final PluginSettings settings;
     private boolean modified = false;
 
     public SettingsPanel() {
+        this.settings = PluginSettings.getInstance();
         createUI();
         loadSettings();
     }
@@ -33,6 +59,29 @@ public class SettingsPanel {
         contentPanel.add(Box.createVerticalStrut(20));
 
         // Validation settings
+        addValidationSettings(contentPanel);
+
+        // Generation settings
+        addGenerationSettings(contentPanel);
+
+        // AI settings
+        addAISettings(contentPanel);
+
+        // Custom commit types
+        addCustomTypesSettings(contentPanel);
+
+        // Add bottom padding to ensure all content is visible
+        contentPanel.add(Box.createVerticalStrut(20));
+
+        JScrollPane mainScrollPane = new JScrollPane(contentPanel);
+        mainScrollPane.setBorder(null);
+        mainScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        mainScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        mainScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        mainPanel.add(mainScrollPane, BorderLayout.CENTER);
+    }
+
+    private void addValidationSettings(JPanel contentPanel) {
         JLabel validationLabel = new JLabel("Validation Settings");
         validationLabel.setFont(validationLabel.getFont().deriveFont(Font.BOLD));
         contentPanel.add(validationLabel);
@@ -46,8 +95,9 @@ public class SettingsPanel {
         showWarningsCheckBox.addActionListener(e -> modified = true);
         contentPanel.add(showWarningsCheckBox);
         contentPanel.add(Box.createVerticalStrut(20));
+    }
 
-        // Generation settings
+    private void addGenerationSettings(JPanel contentPanel) {
         JLabel generationLabel = new JLabel("Generation Settings");
         generationLabel.setFont(generationLabel.getFont().deriveFont(Font.BOLD));
         contentPanel.add(generationLabel);
@@ -58,32 +108,244 @@ public class SettingsPanel {
         contentPanel.add(enableAutoGenerationCheckBox);
         contentPanel.add(Box.createVerticalStrut(10));
 
-        // Max subject length
         JPanel lengthPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         lengthPanel.add(new JLabel("Maximum subject length:"));
         maxSubjectLengthSpinner = new JSpinner(new SpinnerNumberModel(72, 20, 200, 1));
         maxSubjectLengthSpinner.addChangeListener(e -> modified = true);
         lengthPanel.add(maxSubjectLengthSpinner);
+        lengthPanel.add(new JLabel("characters"));
         contentPanel.add(lengthPanel);
         contentPanel.add(Box.createVerticalStrut(20));
+    }
 
-        // Custom commit types
+    private void addAISettings(JPanel contentPanel) {
+        JLabel aiLabel = new JLabel("AI Enhancement Settings");
+        aiLabel.setFont(aiLabel.getFont().deriveFont(Font.BOLD));
+        contentPanel.add(aiLabel);
+        contentPanel.add(Box.createVerticalStrut(10));
+
+        enableAICheckBox = new JCheckBox("Enable AI-enhanced generation (slower, more accurate)");
+        enableAICheckBox.addActionListener(e -> {
+            modified = true;
+            updateAISettingsVisibility();
+        });
+        contentPanel.add(enableAICheckBox);
+        contentPanel.add(Box.createVerticalStrut(10));
+
+        // AI settings panel (shown only when AI is enabled)
+        aiSettingsPanel = new JPanel();
+        aiSettingsPanel.setLayout(new BoxLayout(aiSettingsPanel, BoxLayout.Y_AXIS));
+        aiSettingsPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
+
+        // Provider selection
+        JPanel providerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        providerPanel.add(new JLabel("AI Provider:"));
+        aiProviderComboBox = new JComboBox<>(AIProviderType.values());
+        aiProviderComboBox.addActionListener(e -> {
+            modified = true;
+            updateEndpointForProvider();
+        });
+        providerPanel.add(aiProviderComboBox);
+        aiSettingsPanel.add(providerPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // API Key
+        JPanel apiKeyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        apiKeyPanel.add(new JLabel("API Key:"));
+        apiKeyField = new JPasswordField(30);
+        apiKeyField.getDocument().addDocumentListener(createDocumentListener());
+        apiKeyPanel.add(apiKeyField);
+        aiSettingsPanel.add(apiKeyPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Endpoint
+        JPanel endpointPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        endpointPanel.add(new JLabel("API Endpoint:"));
+        apiEndpointField = new JTextField(40);
+        apiEndpointField.getDocument().addDocumentListener(createDocumentListener());
+        endpointPanel.add(apiEndpointField);
+        aiSettingsPanel.add(endpointPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Model
+        JPanel modelPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        modelPanel.add(new JLabel("Model:"));
+        modelField = new JTextField(20);
+        modelField.getDocument().addDocumentListener(createDocumentListener());
+        modelPanel.add(modelField);
+        aiSettingsPanel.add(modelPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Max tokens
+        JPanel tokensPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        tokensPanel.add(new JLabel("Max Tokens:"));
+        maxTokensSpinner = new JSpinner(new SpinnerNumberModel(500, 50, 2000, 50));
+        maxTokensSpinner.addChangeListener(e -> modified = true);
+        tokensPanel.add(maxTokensSpinner);
+        aiSettingsPanel.add(tokensPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Temperature
+        JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        tempPanel.add(new JLabel("Temperature:"));
+        temperatureSpinner = new JSpinner(new SpinnerNumberModel(0.3, 0.0, 1.0, 0.1));
+        temperatureSpinner.addChangeListener(e -> modified = true);
+        tempPanel.add(temperatureSpinner);
+        aiSettingsPanel.add(tempPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Timeout
+        JPanel timeoutPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        timeoutPanel.add(new JLabel("Timeout:"));
+        timeoutSpinner = new JSpinner(new SpinnerNumberModel(30, 5, 120, 5));
+        timeoutSpinner.addChangeListener(e -> modified = true);
+        timeoutPanel.add(timeoutSpinner);
+        timeoutPanel.add(new JLabel("seconds"));
+        aiSettingsPanel.add(timeoutPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Advanced options
+        enableCachingCheckBox = new JCheckBox("Enable caching");
+        enableCachingCheckBox.addActionListener(e -> modified = true);
+        aiSettingsPanel.add(enableCachingCheckBox);
+
+        fallbackToBasicCheckBox = new JCheckBox("Fallback to basic mode if AI fails");
+        fallbackToBasicCheckBox.addActionListener(e -> modified = true);
+        aiSettingsPanel.add(fallbackToBasicCheckBox);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Message language
+        JPanel languagePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        languagePanel.add(new JLabel("Message Language:"));
+        languageComboBox = new JComboBox<>(new String[]{"中文 (Chinese)", "English"});
+        languageComboBox.addActionListener(e -> modified = true);
+        languagePanel.add(languageComboBox);
+        aiSettingsPanel.add(languagePanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Test connection button
+        testConnectionButton = new JButton("Test Connection");
+        testConnectionButton.addActionListener(e -> testConnection());
+        JPanel testPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        testPanel.add(testConnectionButton);
+        aiSettingsPanel.add(testPanel);
+        aiSettingsPanel.add(Box.createVerticalStrut(10));
+
+        // Prompt template
+        JLabel promptLabel = new JLabel("Custom Prompt Template (optional):");
+        aiSettingsPanel.add(promptLabel);
+        aiSettingsPanel.add(Box.createVerticalStrut(5));
+
+        promptTemplateArea = new JTextArea(4, 40);
+        promptTemplateArea.setLineWrap(true);
+        promptTemplateArea.setWrapStyleWord(true);
+        promptTemplateArea.getDocument().addDocumentListener(createDocumentListener());
+        JScrollPane promptScrollPane = new JScrollPane(promptTemplateArea);
+        promptScrollPane.setPreferredSize(new Dimension(500, 100));
+        promptScrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
+        aiSettingsPanel.add(promptScrollPane);
+        aiSettingsPanel.add(Box.createVerticalStrut(5));
+
+        resetPromptButton = new JButton("Reset to Default");
+        resetPromptButton.addActionListener(e -> {
+            promptTemplateArea.setText("");
+            modified = true;
+        });
+        JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        resetPanel.add(resetPromptButton);
+        aiSettingsPanel.add(resetPanel);
+
+        contentPanel.add(aiSettingsPanel);
+        contentPanel.add(Box.createVerticalStrut(20));
+    }
+
+    private void addCustomTypesSettings(JPanel contentPanel) {
         JLabel customTypesLabel = new JLabel("Custom Commit Types (one per line):");
         customTypesLabel.setFont(customTypesLabel.getFont().deriveFont(Font.BOLD));
         contentPanel.add(customTypesLabel);
         contentPanel.add(Box.createVerticalStrut(10));
 
         customTypesTextArea = new JTextArea(5, 40);
-        customTypesTextArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-        customTypesTextArea.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        customTypesTextArea.setLineWrap(false);
+        customTypesTextArea.getDocument().addDocumentListener(createDocumentListener());
+        JScrollPane scrollPane = new JScrollPane(customTypesTextArea);
+        scrollPane.setPreferredSize(new Dimension(500, 100));
+        scrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
+        contentPanel.add(scrollPane);
+    }
+
+    private javax.swing.event.DocumentListener createDocumentListener() {
+        return new javax.swing.event.DocumentListener() {
             public void insertUpdate(javax.swing.event.DocumentEvent e) { modified = true; }
             public void removeUpdate(javax.swing.event.DocumentEvent e) { modified = true; }
             public void changedUpdate(javax.swing.event.DocumentEvent e) { modified = true; }
-        });
-        JScrollPane scrollPane = new JScrollPane(customTypesTextArea);
-        contentPanel.add(scrollPane);
+        };
+    }
 
-        mainPanel.add(contentPanel, BorderLayout.NORTH);
+    private void updateAISettingsVisibility() {
+        aiSettingsPanel.setVisible(enableAICheckBox.isSelected());
+    }
+
+    private void updateEndpointForProvider() {
+        AIProviderType selectedType = (AIProviderType) aiProviderComboBox.getSelectedItem();
+        if (selectedType != null && !selectedType.getDefaultEndpoint().isEmpty()) {
+            apiEndpointField.setText(selectedType.getDefaultEndpoint());
+        }
+
+        // Update default model based on provider
+        switch (selectedType) {
+            case OPENAI:
+                modelField.setText("gpt-4-turbo");
+                break;
+            case CLAUDE:
+                modelField.setText("claude-3-5-sonnet-20241022");
+                break;
+            case DEEPSEEK:
+                modelField.setText("deepseek-chat");
+                break;
+            case ZHIPU:
+                modelField.setText("glm-4");
+                break;
+            case QWEN:
+                modelField.setText("qwen-turbo");
+                break;
+            case OLLAMA:
+                modelField.setText("llama2");
+                break;
+        }
+    }
+
+    private void testConnection() {
+        // Save current values temporarily
+        PluginSettings tempSettings = new PluginSettings();
+        saveToSettings(tempSettings);
+
+        AIProvider provider = AIProviderFactory.createProvider(tempSettings);
+        if (provider == null) {
+            Messages.showErrorDialog("Please select an AI provider", "Test Connection");
+            return;
+        }
+
+        testConnectionButton.setEnabled(false);
+        testConnectionButton.setText("Testing...");
+
+        // Run test in background
+        new Thread(() -> {
+            String result = provider.testConnection();
+            SwingUtilities.invokeLater(() -> {
+                testConnectionButton.setEnabled(true);
+                testConnectionButton.setText("Test Connection");
+
+                if (result == null) {
+                    Messages.showInfoMessage("Connection successful!", "Test Connection");
+                } else {
+                    Messages.showErrorDialog("Connection failed:\n" + result, "Test Connection");
+                }
+            });
+        }).start();
     }
 
     public JPanel getPanel() {
@@ -95,13 +357,37 @@ public class SettingsPanel {
     }
 
     public void apply() {
-        // In a real implementation, save settings to persistent storage
-        // For now, we'll just reset the modified flag
+        saveToSettings(settings);
         modified = false;
+    }
 
-        // Here you would typically save to:
-        // - PropertiesComponent for simple key-value pairs
-        // - PersistentStateComponent for complex settings
+    private void saveToSettings(PluginSettings targetSettings) {
+        targetSettings.setEnableValidation(enableValidationCheckBox.isSelected());
+        targetSettings.setShowWarnings(showWarningsCheckBox.isSelected());
+        targetSettings.setEnableAutoGeneration(enableAutoGenerationCheckBox.isSelected());
+        targetSettings.setMaxSubjectLength((Integer) maxSubjectLengthSpinner.getValue());
+        targetSettings.setCustomTypes(customTypesTextArea.getText());
+
+        // AI settings
+        targetSettings.setEnableAI(enableAICheckBox.isSelected());
+        targetSettings.setAiProviderType((AIProviderType) aiProviderComboBox.getSelectedItem());
+        targetSettings.setApiKey(apiKeyField.getText());
+        targetSettings.setApiEndpoint(apiEndpointField.getText());
+        targetSettings.setModel(modelField.getText());
+        targetSettings.setMaxTokens((Integer) maxTokensSpinner.getValue());
+        targetSettings.setTemperature((Double) temperatureSpinner.getValue());
+        targetSettings.setTimeoutSeconds((Integer) timeoutSpinner.getValue());
+        targetSettings.setEnableCaching(enableCachingCheckBox.isSelected());
+        targetSettings.setFallbackToBasic(fallbackToBasicCheckBox.isSelected());
+        targetSettings.setPromptTemplate(promptTemplateArea.getText());
+
+        // Save language setting
+        String selectedLanguage = (String) languageComboBox.getSelectedItem();
+        if (selectedLanguage.startsWith("中文")) {
+            targetSettings.setMessageLanguage("zh-CN");
+        } else {
+            targetSettings.setMessageLanguage("en");
+        }
     }
 
     public void reset() {
@@ -110,12 +396,33 @@ public class SettingsPanel {
     }
 
     private void loadSettings() {
-        // Load default settings
-        // In a real implementation, load from persistent storage
-        enableValidationCheckBox.setSelected(true);
-        enableAutoGenerationCheckBox.setSelected(true);
-        showWarningsCheckBox.setSelected(true);
-        maxSubjectLengthSpinner.setValue(72);
-        customTypesTextArea.setText("");
+        enableValidationCheckBox.setSelected(settings.isEnableValidation());
+        enableAutoGenerationCheckBox.setSelected(settings.isEnableAutoGeneration());
+        showWarningsCheckBox.setSelected(settings.isShowWarnings());
+        maxSubjectLengthSpinner.setValue(settings.getMaxSubjectLength());
+        customTypesTextArea.setText(settings.getCustomTypes());
+
+        // AI settings
+        enableAICheckBox.setSelected(settings.isEnableAI());
+        aiProviderComboBox.setSelectedItem(settings.getAiProviderType());
+        apiKeyField.setText(settings.getApiKey());
+        apiEndpointField.setText(settings.getApiEndpoint());
+        modelField.setText(settings.getModel());
+        maxTokensSpinner.setValue(settings.getMaxTokens());
+        temperatureSpinner.setValue(settings.getTemperature());
+        timeoutSpinner.setValue(settings.getTimeoutSeconds());
+        enableCachingCheckBox.setSelected(settings.isEnableCaching());
+        fallbackToBasicCheckBox.setSelected(settings.isFallbackToBasic());
+        promptTemplateArea.setText(settings.getPromptTemplate());
+
+        // Load language setting
+        String language = settings.getMessageLanguage();
+        if ("zh-CN".equals(language) || "zh".equals(language)) {
+            languageComboBox.setSelectedIndex(0); // 中文
+        } else {
+            languageComboBox.setSelectedIndex(1); // English
+        }
+
+        updateAISettingsVisibility();
     }
 }

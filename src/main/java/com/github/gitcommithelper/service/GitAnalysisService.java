@@ -26,10 +26,22 @@ public class GitAnalysisService {
      * Analyzes file changes in the current changelist
      */
     public List<FileChangeInfo> analyzeFileChanges(Project project) {
+        return analyzeFileChanges(project, null);
+    }
+
+    /**
+     * Analyzes specific file changes, or all changes if selectedChanges is null
+     */
+    public List<FileChangeInfo> analyzeFileChanges(Project project, Collection<Change> selectedChanges) {
         List<FileChangeInfo> fileChanges = new ArrayList<>();
 
-        ChangeListManager changeListManager = ChangeListManager.getInstance(project);
-        Collection<Change> changes = changeListManager.getAllChanges();
+        Collection<Change> changes;
+        if (selectedChanges != null && !selectedChanges.isEmpty()) {
+            changes = selectedChanges;
+        } else {
+            ChangeListManager changeListManager = ChangeListManager.getInstance(project);
+            changes = changeListManager.getAllChanges();
+        }
 
         for (Change change : changes) {
             FileChangeInfo.ChangeType changeType = determineChangeType(change);

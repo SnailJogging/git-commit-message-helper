@@ -1,191 +1,216 @@
 # Git Commit Message Helper
 
-一个 IntelliJ IDEA 插件，帮助开发者编写规范化的 Git 提交信息，遵循 [Conventional Commits](https://www.conventionalcommits.org/) 规范。
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/Git.Commit.Message.Helper)
+[![Platform](https://img.shields.io/badge/platform-IntelliJ%20IDEA-green.svg)](https://www.jetbrains.com/idea/)
+[![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 
-## 功能特性
+一个强大的 IntelliJ IDEA 插件，帮助开发者自动生成规范化的 Git 提交信息，支持 AI 增强和多语言。
 
-### 🚀 主要功能
-
-- **自动生成提交信息模板**：根据文件变动智能生成符合规范的提交信息
-- **实时格式校验**：在提交前自动验证提交信息格式
-- **智能类型推断**：基于修改的文件类型自动推荐合适的提交类型
-- **作用域建议**：根据文件路径智能建议提交作用域
-- **多种提交类型支持**：支持所有标准的 Conventional Commits 类型
-
-### 📋 支持的提交类型
-
-| 类型 | 描述 |
-|------|------|
-| `feat` | 新功能 |
-| `fix` | Bug 修复 |
-| `docs` | 文档更新 |
-| `style` | 代码格式调整（不影响代码含义） |
-| `refactor` | 代码重构 |
-| `perf` | 性能优化 |
-| `test` | 测试相关 |
-| `build` | 构建系统或依赖更新 |
-| `ci` | CI/CD 配置更新 |
-| `chore` | 其他不修改 src 或 test 文件的更改 |
-| `revert` | 回滚之前的提交 |
-
-## 安装
-
-### 从 JetBrains Marketplace 安装（即将上线）
-
-1. 打开 IntelliJ IDEA
-2. 进入 `File` > `Settings` > `Plugins`
-3. 搜索 "Git Commit Message Helper"
-4. 点击 `Install` 安装
-
-### 从源码构建
-
-```bash
-# 克隆仓库
-git clone https://github.com/yourusername/git-commit-message-helper.git
-cd git-commit-message-helper
-
-# 构建插件
-./gradlew buildPlugin
-
-# 生成的插件文件位于 build/distributions/
-```
-
-## 使用方法
-
-### 生成提交信息
-
-1. 在 Git 提交对话框中，点击工具栏上的 ⚡ 图标
-2. 插件会自动分析当前的文件变动
-3. 生成的提交信息会显示在对话框中
-4. 可以选择复制到剪贴板或直接使用
-
-### 自动验证
-
-插件会在提交前自动验证提交信息：
-
-- ✅ 格式正确：允许提交
-- ⚠️ 有警告：询问是否继续
-- ❌ 格式错误：询问是否强制提交
-
-### 配置选项
-
-进入 `File` > `Settings` > `Tools` > `Git Commit Message Helper` 可以配置：
-
-- 启用/禁用提交信息验证
-- 启用/禁用自动生成
-- 显示/隐藏警告
-- 自定义主题行最大长度
-- 添加自定义提交类型
-
-## 提交信息格式
-
-### 基本格式
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-### 示例
-
-```
-feat(auth): add user authentication
-
-Implements JWT-based authentication system with refresh tokens.
-Includes login, logout, and token refresh endpoints.
-
-Fixes #123
-```
-
-### 破坏性变更
-
-```
-feat(api)!: change authentication method
-
-BREAKING CHANGE: Old API key authentication is removed.
-Use JWT tokens instead.
-```
-
-## 开发
-
-### 环境要求
-
-- JDK 17+
-- IntelliJ IDEA 2023.2+
-- Gradle 8.0+
-
-### 开发命令
-
-```bash
-# 运行插件开发环境
-./gradlew runIde
-
-# 运行测试
-./gradlew test
-
-# 构建插件
-./gradlew buildPlugin
-
-# 验证插件
-./gradlew verifyPlugin
-```
-
-### 项目结构
-
-```
-src/
-├── main/
-│   ├── java/com/github/gitcommithelper/
-│   │   ├── action/          # 用户操作
-│   │   ├── model/           # 数据模型
-│   │   ├── service/         # 业务逻辑
-│   │   ├── ui/              # 用户界面
-│   │   └── validator/       # 验证器
-│   └── resources/
-│       └── META-INF/
-│           └── plugin.xml   # 插件配置
-└── test/                    # 单元测试
-```
-
-## 技术栈
-
-- Java 17
-- IntelliJ Platform SDK
-- Git4Idea (IntelliJ Git 插件 API)
-- JUnit 4 (测试)
-
-## 贡献
-
-欢迎贡献！请遵循以下步骤：
-
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feat/amazing-feature`)
-3. 提交更改 (`git commit -m 'feat: add amazing feature'`)
-4. 推送到分支 (`git push origin feat/amazing-feature`)
-5. 开启 Pull Request
-
-请确保：
-- 代码遵循项目的编码规范
-- 添加适当的测试
-- 更新相关文档
-
-## 许可证
-
-本项目采用 MIT 许可证 - 详见 [LICENSE](LICENSE) 文件
-
-## 致谢
-
-- [Conventional Commits](https://www.conventionalcommits.org/) - 提交信息规范
-- [IntelliJ Platform SDK](https://plugins.jetbrains.com/docs/intellij/) - 插件开发文档
-
-## 联系方式
-
-- 问题反馈：[GitHub Issues](https://github.com/yourusername/git-commit-message-helper/issues)
-- 邮箱：support@example.com
+A powerful IntelliJ IDEA plugin that helps developers automatically generate standardized Git commit messages with AI enhancement and multi-language support.
 
 ---
 
-⭐ 如果这个项目对你有帮助，请给个 Star！
+## ✨ 核心特性 | Key Features
+
+- **🤖 AI 增强生成** - 支持 7 种主流 AI 提供商（OpenAI、DeepSeek、智谱 AI、阿里通义、Claude、Ollama、Azure）
+- **🌏 多语言支持** - 中文/英文提交信息自由切换，默认中文
+- **📋 规则验证** - 自动验证提交信息格式，符合 Conventional Commits 规范
+- **🎯 智能分析** - 分析代码变更，生成精准的 type、scope 和 subject
+- **⚡ 直接填充** - 一键将生成的提交信息填充到输入框
+- **🎨 选择性分析** - 仅分析选中的文件，提高生成速度
+- **🔧 高度可配置** - 自定义 Prompt、模型参数、API endpoint
+
+---
+
+## 🚀 快速开始 | Quick Start
+
+### 1. 安装插件
+
+**从 JetBrains Marketplace 安装**（推荐）：
+- `Settings/Preferences` → `Plugins` → `Marketplace`
+- 搜索 "Git Commit Message Helper"
+- 点击 `Install`
+
+**从磁盘安装**（本地构建）：
+- 下载或构建插件 `.zip` 文件
+- `Settings/Preferences` → `Plugins` → ⚙️ → `Install Plugin from Disk`
+
+详细安装说明请参阅 [INSTALLATION.md](INSTALLATION.md)
+
+### 2. 配置 AI（可选但推荐）
+
+`Settings/Preferences` → `Tools` → `Git Commit Message Helper`
+
+**国内用户推荐**：
+- **智谱 AI**（GLM-4）- 免费额度充足
+- **DeepSeek** - 性价比高
+- **阿里通义千问** - 稳定可靠
+
+详细配置指南请参阅 [USER_GUIDE.md](USER_GUIDE.md#ai-配置)
+
+### 3. 开始使用
+
+1. 在 IDEA 中修改代码并保存
+2. 打开 Git Commit 窗口（`Ctrl+K` / `Cmd+K`）
+3. 点击工具栏的 **"Generate AI Message"** 按钮
+4. 插件自动分析代码变更并生成提交信息
+5. 点击 **"Commit"** 提交
+
+---
+
+## 🎯 支持的 AI 提供商 | AI Providers
+
+| 提供商 | 模型示例 | 推荐场景 | 配置难度 |
+|--------|---------|---------|---------|
+| 🇨🇳 **智谱 AI** | GLM-4 | 国内用户首选 | ⭐ 简单 |
+| 🇨🇳 **DeepSeek** | deepseek-chat | 高性价比 | ⭐ 简单 |
+| 🇨🇳 **阿里通义** | qwen-turbo | 企业用户 | ⭐ 简单 |
+| 🌍 **OpenAI** | GPT-4 Turbo | 国际用户 | ⭐⭐ 中等 |
+| 🌍 **Claude** | Claude 3.5 Sonnet | 高质量生成 | ⭐⭐ 中等 |
+| 🏠 **Ollama** | llama2/qwen | 本地部署 | ⭐⭐⭐ 较难 |
+| ☁️ **Azure OpenAI** | 企业版 GPT | 企业用户 | ⭐⭐⭐ 较难 |
+
+---
+
+## 🌏 多语言提交信息 | Multi-language Support
+
+插件支持生成**中文**或**英文**提交信息，默认为中文。
+
+### 中文模式（默认）
+
+```
+feat(user): 添加用户名验证以防止 li 开头的用户名冲突
+fix(auth): 修复登录时的空指针异常
+docs(readme): 更新项目安装说明
+```
+
+### 英文模式
+
+```
+feat(user): add username validation to prevent 'li' prefix conflicts
+fix(auth): fix null pointer exception during login
+docs(readme): update project installation guide
+```
+
+**切换语言**：
+`Settings` → `Git Commit Message Helper` → `Message Language` → 选择 `中文 (Chinese)` 或 `English`
+
+详细说明请参阅 [USER_GUIDE.md](USER_GUIDE.md#多语言支持)
+
+---
+
+## 📚 文档导航 | Documentation
+
+- **[USER_GUIDE.md](USER_GUIDE.md)** - 完整用户手册（基本使用、AI 配置、高级功能、故障排除）
+- **[INSTALLATION.md](INSTALLATION.md)** - 详细安装指南
+- **[CHANGELOG.md](CHANGELOG.md)** - 版本变更历史
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** - 贡献指南（如何参与开发）
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - 架构设计文档（开发者）
+
+---
+
+## 💡 使用示例 | Examples
+
+### 场景 1：添加新功能
+
+**代码变更**：
+```java
+public void validateUsername(String username) {
+    if (username.startsWith("li")) {
+        throw new IllegalArgumentException("Username cannot start with 'li'");
+    }
+}
+```
+
+**生成的提交信息**（中文模式）：
+```
+feat(user): 添加用户名验证以防止 li 开头的用户名冲突
+```
+
+### 场景 2：修复 Bug
+
+**代码变更**：修复了登录时的 NullPointerException
+
+**生成的提交信息**（中文模式）：
+```
+fix(auth): 修复登录时的空指针异常
+```
+
+### 场景 3：更新文档
+
+**代码变更**：更新了 README.md 的安装说明
+
+**生成的提交信息**（中文模式）：
+```
+docs(readme): 更新项目安装说明
+```
+
+---
+
+## ⚙️ 系统要求 | Requirements
+
+- **IntelliJ IDEA**: 2023.2 - 2025.2（支持 Community 和 Ultimate 版本）
+- **JDK**: 17 或更高版本
+- **Git**: 已安装并配置
+
+**已测试版本**：
+- ✅ IntelliJ IDEA 2023.2.5
+- ✅ IntelliJ IDEA 2024.1.4 (Community Edition)
+- ✅ IntelliJ IDEA 2024.2
+
+---
+
+## 🛠️ 开发 | Development
+
+### 构建插件
+
+```bash
+./gradlew buildPlugin
+```
+
+### 运行插件（开发模式）
+
+```bash
+./gradlew runIde
+```
+
+### 运行测试
+
+```bash
+./gradlew test
+```
+
+详细开发指南请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
+## 🤝 贡献 | Contributing
+
+欢迎贡献代码、报告问题或提出建议！
+
+- 提交 Issue：[GitHub Issues](https://github.com/yourusername/Git.Commit.Message.Helper/issues)
+- 提交 PR：请参阅 [CONTRIBUTING.md](CONTRIBUTING.md)
+- 讨论功能：[GitHub Discussions](https://github.com/yourusername/Git.Commit.Message.Helper/discussions)
+
+---
+
+## 📄 许可证 | License
+
+本项目采用 MIT 许可证，详见 [LICENSE](LICENSE) 文件。
+
+---
+
+## 📞 联系方式 | Contact
+
+- **问题反馈**: [GitHub Issues](https://github.com/yourusername/git-commit-message-helper/issues)
+- **参考资源**: [Conventional Commits](https://www.conventionalcommits.org/)
+
+---
+
+## ⭐ Star History
+
+如果这个插件对你有帮助，请给项目一个 Star ⭐
+
+---
+
+**🎉 开始使用 Git Commit Message Helper，让提交信息更规范、更清晰！**
