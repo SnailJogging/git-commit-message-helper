@@ -4,6 +4,7 @@ import com.github.gitcommithelper.ai.AIProvider;
 import com.github.gitcommithelper.ai.AIProviderFactory;
 import com.github.gitcommithelper.ai.AIProviderType;
 import com.github.gitcommithelper.settings.PluginSettings;
+import com.intellij.icons.AllIcons;
 import com.intellij.openapi.ui.Messages;
 
 import javax.swing.*;
@@ -160,24 +161,23 @@ public class SettingsPanel {
         apiKeyField.getDocument().addDocumentListener(createDocumentListener());
         apiKeyPanel.add(apiKeyField);
 
-        // Add show/hide icon button (simple and standard design)
-        JButton togglePasswordButton = new JButton("●");  // Filled circle = hidden
+        // Add show/hide icon button using IntelliJ platform icons (standard eye icon)
+        JButton togglePasswordButton = new JButton(AllIcons.Actions.Show);
         togglePasswordButton.setToolTipText("显示 API Key");
         togglePasswordButton.setFocusable(false);
         togglePasswordButton.setBorderPainted(false);
         togglePasswordButton.setContentAreaFilled(false);
         togglePasswordButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        togglePasswordButton.setFont(togglePasswordButton.getFont().deriveFont(14f));
         togglePasswordButton.addActionListener(e -> {
             if (apiKeyField.getEchoChar() == 0) {
-                // Currently visible → hide it
+                // Currently visible → hide it (show eye icon)
                 apiKeyField.setEchoChar('•');
-                togglePasswordButton.setText("●");  // Filled circle
+                togglePasswordButton.setIcon(AllIcons.Actions.Show);
                 togglePasswordButton.setToolTipText("显示 API Key");
             } else {
-                // Currently hidden → show it
+                // Currently hidden → show it (show eye-off icon using crossed version)
                 apiKeyField.setEchoChar((char) 0);
-                togglePasswordButton.setText("○");  // Empty circle
+                togglePasswordButton.setIcon(AllIcons.Actions.Cancel);  // Use cancel/cross icon
                 togglePasswordButton.setToolTipText("隐藏 API Key");
             }
         });
