@@ -160,20 +160,24 @@ public class SettingsPanel {
         apiKeyField.getDocument().addDocumentListener(createDocumentListener());
         apiKeyPanel.add(apiKeyField);
 
-        // Add show/hide password button
-        JButton togglePasswordButton = new JButton("👁");
-        togglePasswordButton.setToolTipText("显示/隐藏 API Key");
+        // Add show/hide icon button (simple and standard design)
+        JButton togglePasswordButton = new JButton("●");  // Filled circle = hidden
+        togglePasswordButton.setToolTipText("显示 API Key");
         togglePasswordButton.setFocusable(false);
+        togglePasswordButton.setBorderPainted(false);
+        togglePasswordButton.setContentAreaFilled(false);
+        togglePasswordButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        togglePasswordButton.setFont(togglePasswordButton.getFont().deriveFont(14f));
         togglePasswordButton.addActionListener(e -> {
             if (apiKeyField.getEchoChar() == 0) {
-                // Currently visible, hide it
+                // Currently visible → hide it
                 apiKeyField.setEchoChar('•');
-                togglePasswordButton.setText("👁");
+                togglePasswordButton.setText("●");  // Filled circle
                 togglePasswordButton.setToolTipText("显示 API Key");
             } else {
-                // Currently hidden, show it
+                // Currently hidden → show it
                 apiKeyField.setEchoChar((char) 0);
-                togglePasswordButton.setText("🙈");
+                togglePasswordButton.setText("○");  // Empty circle
                 togglePasswordButton.setToolTipText("隐藏 API Key");
             }
         });
