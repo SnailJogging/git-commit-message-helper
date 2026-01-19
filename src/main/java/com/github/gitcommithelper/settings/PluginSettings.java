@@ -9,6 +9,9 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Persistent settings for the Git Commit Message Helper plugin
  */
@@ -30,7 +33,14 @@ public class PluginSettings implements PersistentStateComponent<PluginSettings> 
     // AI settings
     public boolean enableAI = false;
     public String aiProviderType = AIProviderType.NONE.name();
+
+    // Per-provider API keys (new implementation)
+    public Map<String, String> providerApiKeys = new HashMap<>();
+
+    // Legacy single API key (kept for backward compatibility)
+    @Deprecated
     public String apiKey = "";
+
     public String apiEndpoint = "";
     public String model = "gpt-4-turbo";
     public int maxTokens = 500;
@@ -41,7 +51,7 @@ public class PluginSettings implements PersistentStateComponent<PluginSettings> 
     public boolean includeFileContent = false;
     public String promptTemplate = "";
     public String messageLanguage = "zh-CN"; // Default to Chinese
-    public boolean trustAllCertificates = false; // Trust all SSL certificates (for corporate proxy)
+    public boolean trustAllCertificates = true; // Default enabled for corporate proxy convenience
 
     public static PluginSettings getInstance() {
         return ApplicationManager.getApplication().getService(PluginSettings.class);
@@ -120,12 +130,63 @@ public class PluginSettings implements PersistentStateComponent<PluginSettings> 
         this.aiProviderType = type.name();
     }
 
+    /**
+     * Get API key for current provider (new implementation)
+     */
     public String getApiKey() {
-        return apiKey;
+        AIProviderType currentType = getAiProviderType();
+        if (currentType == AIProviderType.NONE) {
+            return "";
+        }
+
+        String key = providerApiKeys.get(currentType.name());
+        if (key != null && !key.isEmpty()) {
+            return key;
+        }
+
+        // Backward compatibility: if no per-provider key exists, return legacy key
+        return apiKey != null ? apiKey : "";
     }
 
+    /**
+     * Set API key for current provider (new implementation)
+     */
     public void setApiKey(String apiKey) {
+        AIProviderType currentType = getAiProviderType();
+        if (currentType != AIProviderType.NONE) {
+            if (providerApiKeys == null) {
+                providerApiKeys = new HashMap<>();
+            }
+            providerApiKeys.put(currentType.name(), apiKey != null ? apiKey : "");
+        }
+        // Also update legacy field for backward compatibility
         this.apiKey = apiKey;
+    }
+
+    /**
+     * Get API key for specific provider
+     */
+    public String getApiKeyForProvider(AIProviderType providerType) {
+        if (providerType == AIProviderType.NONE) {
+            return "";
+        }
+        if (providerApiKeys == null) {
+            providerApiKeys = new HashMap<>();
+        }
+        return providerApiKeys.getOrDefault(providerType.name(), "");
+    }
+
+    /**
+     * Set API key for specific provider
+     */
+    public void setApiKeyForProvider(AIProviderType providerType, String apiKey) {
+        if (providerType == AIProviderType.NONE) {
+            return;
+        }
+        if (providerApiKeys == null) {
+            providerApiKeys = new HashMap<>();
+        }
+        providerApiKeys.put(providerType.name(), apiKey != null ? apiKey : "");
     }
 
     public String getApiEndpoint() {

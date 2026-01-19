@@ -23,7 +23,7 @@ public class SettingsPanel {
     // AI settings
     private JCheckBox enableAICheckBox;
     private JComboBox<AIProviderType> aiProviderComboBox;
-    private JTextField apiKeyField;
+    private JPasswordField apiKeyField;
     private JTextField apiEndpointField;
     private JTextField modelField;
     private JSpinner maxTokensSpinner;
@@ -147,18 +147,38 @@ public class SettingsPanel {
         aiProviderComboBox = new JComboBox<>(AIProviderType.values());
         aiProviderComboBox.addActionListener(e -> {
             modified = true;
-            updateEndpointForProvider();
+            onProviderChanged();
         });
         providerPanel.add(aiProviderComboBox);
         aiSettingsPanel.add(providerPanel);
         aiSettingsPanel.add(Box.createVerticalStrut(10));
 
-        // API Key
+        // API Key with show/hide toggle
         JPanel apiKeyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         apiKeyPanel.add(new JLabel("API Key:"));
         apiKeyField = new JPasswordField(30);
         apiKeyField.getDocument().addDocumentListener(createDocumentListener());
         apiKeyPanel.add(apiKeyField);
+
+        // Add show/hide password button
+        JButton togglePasswordButton = new JButton("👁");
+        togglePasswordButton.setToolTipText("显示/隐藏 API Key");
+        togglePasswordButton.setFocusable(false);
+        togglePasswordButton.addActionListener(e -> {
+            if (apiKeyField.getEchoChar() == 0) {
+                // Currently visible, hide it
+                apiKeyField.setEchoChar('•');
+                togglePasswordButton.setText("👁");
+                togglePasswordButton.setToolTipText("显示 API Key");
+            } else {
+                // Currently hidden, show it
+                apiKeyField.setEchoChar((char) 0);
+                togglePasswordButton.setText("🙈");
+                togglePasswordButton.setToolTipText("隐藏 API Key");
+            }
+        });
+        apiKeyPanel.add(togglePasswordButton);
+
         aiSettingsPanel.add(apiKeyPanel);
         aiSettingsPanel.add(Box.createVerticalStrut(10));
 
@@ -295,9 +315,30 @@ public class SettingsPanel {
         aiSettingsPanel.setVisible(enableAICheckBox.isSelected());
     }
 
-    private void updateEndpointForProvider() {
+    /**
+     * Called when AI provider selection changes
+     * Saves current API key and loads the API key for the newly selected provider
+     */
+    private void onProviderChanged() {
+        // First, save the current API key to the previous provider
+        AIProviderType previousType = settings.getAiProviderType();
+        if (previousType != AIProviderType.NONE) {
+            String currentApiKey = apiKeyField.getText();
+            settings.setApiKeyForProvider(previousType, currentApiKey);
+        }
+
+        // Then, load settings for the newly selected provider
         AIProviderType selectedType = (AIProviderType) aiProviderComboBox.getSelectedItem();
-        if (selectedType != null && !selectedType.getDefaultEndpoint().isEmpty()) {
+        if (selectedType == null) {
+            return;
+        }
+
+        // Load API key for the new provider
+        String providerApiKey = settings.getApiKeyForProvider(selectedType);
+        apiKeyField.setText(providerApiKey);
+
+        // Update endpoint
+        if (!selectedType.getDefaultEndpoint().isEmpty()) {
             apiEndpointField.setText(selectedType.getDefaultEndpoint());
         }
 
@@ -376,8 +417,15 @@ public class SettingsPanel {
 
         // AI settings
         targetSettings.setEnableAI(enableAICheckBox.isSelected());
-        targetSettings.setAiProviderType((AIProviderType) aiProviderComboBox.getSelectedItem());
-        targetSettings.setApiKey(apiKeyField.getText());
+
+        // Save current API key for current provider before saving provider type
+        AIProviderType currentType = (AIProviderType) aiProviderComboBox.getSelectedItem();
+        if (currentType != null && currentType != AIProviderType.NONE) {
+            targetSettings.setApiKeyForProvider(currentType, apiKeyField.getText());
+        }
+
+        targetSettings.setAiProviderType(currentType);
+        targetSettings.setApiKey(apiKeyField.getText()); // Also update legacy field
         targetSettings.setApiEndpoint(apiEndpointField.getText());
         targetSettings.setModel(modelField.getText());
         targetSettings.setMaxTokens((Integer) maxTokensSpinner.getValue());
