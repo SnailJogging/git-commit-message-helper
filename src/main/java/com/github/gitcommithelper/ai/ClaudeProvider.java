@@ -39,6 +39,7 @@ public class ClaudeProvider extends BaseAIProvider {
         try {
             URL url = new URL(getEndpoint() + "/v1/messages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            configureSSL(conn); // Configure SSL certificate handling
             conn.setRequestMethod("POST");
             conn.setRequestProperty("x-api-key", getApiKey());
             conn.setRequestProperty("anthropic-version", API_VERSION);
@@ -78,6 +79,7 @@ public class ClaudeProvider extends BaseAIProvider {
 
             URL url = new URL(getEndpoint() + "/v1/messages");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            configureSSL(conn); // Configure SSL certificate handling
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("x-api-key", getApiKey());

@@ -38,6 +38,7 @@ public class DeepSeekProvider extends BaseAIProvider {
         try {
             URL url = new URL(getEndpoint() + "/models");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            configureSSL(conn); // Configure SSL certificate handling
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Authorization", "Bearer " + getApiKey());
             conn.setConnectTimeout(5000);
@@ -64,6 +65,7 @@ public class DeepSeekProvider extends BaseAIProvider {
 
             URL url = new URL(getEndpoint() + "/chat/completions");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            configureSSL(conn); // Configure SSL certificate handling
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
             conn.setRequestProperty("Authorization", "Bearer " + getApiKey());

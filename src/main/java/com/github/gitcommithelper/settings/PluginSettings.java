@@ -41,6 +41,7 @@ public class PluginSettings implements PersistentStateComponent<PluginSettings> 
     public boolean includeFileContent = false;
     public String promptTemplate = "";
     public String messageLanguage = "zh-CN"; // Default to Chinese
+    public boolean trustAllCertificates = false; // Trust all SSL certificates (for corporate proxy)
 
     public static PluginSettings getInstance() {
         return ApplicationManager.getApplication().getService(PluginSettings.class);
@@ -205,5 +206,13 @@ public class PluginSettings implements PersistentStateComponent<PluginSettings> 
 
     public void setMessageLanguage(String messageLanguage) {
         this.messageLanguage = messageLanguage;
+    }
+
+    public boolean isTrustAllCertificates() {
+        return trustAllCertificates;
+    }
+
+    public void setTrustAllCertificates(boolean trustAllCertificates) {
+        this.trustAllCertificates = trustAllCertificates;
     }
 }

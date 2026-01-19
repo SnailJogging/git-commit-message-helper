@@ -31,6 +31,7 @@ public class SettingsPanel {
     private JSpinner timeoutSpinner;
     private JCheckBox enableCachingCheckBox;
     private JCheckBox fallbackToBasicCheckBox;
+    private JCheckBox trustAllCertificatesCheckBox;
     private JButton testConnectionButton;
     private JTextArea promptTemplateArea;
     private JButton resetPromptButton;
@@ -215,6 +216,11 @@ public class SettingsPanel {
         fallbackToBasicCheckBox = new JCheckBox("Fallback to basic mode if AI fails");
         fallbackToBasicCheckBox.addActionListener(e -> modified = true);
         aiSettingsPanel.add(fallbackToBasicCheckBox);
+
+        trustAllCertificatesCheckBox = new JCheckBox("Trust all SSL certificates (for corporate proxy)");
+        trustAllCertificatesCheckBox.setToolTipText("WARNING: Disables SSL certificate verification. Only enable in corporate proxy environments.");
+        trustAllCertificatesCheckBox.addActionListener(e -> modified = true);
+        aiSettingsPanel.add(trustAllCertificatesCheckBox);
         aiSettingsPanel.add(Box.createVerticalStrut(10));
 
         // Message language
@@ -379,6 +385,7 @@ public class SettingsPanel {
         targetSettings.setTimeoutSeconds((Integer) timeoutSpinner.getValue());
         targetSettings.setEnableCaching(enableCachingCheckBox.isSelected());
         targetSettings.setFallbackToBasic(fallbackToBasicCheckBox.isSelected());
+        targetSettings.setTrustAllCertificates(trustAllCertificatesCheckBox.isSelected());
         targetSettings.setPromptTemplate(promptTemplateArea.getText());
 
         // Save language setting
@@ -413,6 +420,7 @@ public class SettingsPanel {
         timeoutSpinner.setValue(settings.getTimeoutSeconds());
         enableCachingCheckBox.setSelected(settings.isEnableCaching());
         fallbackToBasicCheckBox.setSelected(settings.isFallbackToBasic());
+        trustAllCertificatesCheckBox.setSelected(settings.isTrustAllCertificates());
         promptTemplateArea.setText(settings.getPromptTemplate());
 
         // Load language setting

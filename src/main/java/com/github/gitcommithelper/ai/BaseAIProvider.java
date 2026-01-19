@@ -2,8 +2,10 @@ package com.github.gitcommithelper.ai;
 
 import com.github.gitcommithelper.model.FileChangeInfo;
 import com.github.gitcommithelper.settings.PluginSettings;
+import com.github.gitcommithelper.util.SSLUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.HttpURLConnection;
 import java.util.List;
 
 /**
@@ -150,5 +152,21 @@ public abstract class BaseAIProvider implements AIProvider {
         }
 
         return cleaned;
+    }
+
+    /**
+     * Configures SSL certificate handling for HttpURLConnection
+     * <p>
+     * If trustAllCertificates is enabled in settings, this will configure
+     * the connection to trust all SSL certificates, which is useful in
+     * corporate proxy environments (e.g., mitmproxy).
+     * </p>
+     *
+     * @param connection the HttpURLConnection to configure
+     */
+    protected void configureSSL(HttpURLConnection connection) {
+        if (settings.isTrustAllCertificates()) {
+            SSLUtil.trustAllCertificates(connection);
+        }
     }
 }
