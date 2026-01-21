@@ -546,6 +546,62 @@ src/main/java/com/example/order/payment/PaymentService.java
 
 ---
 
+## 🌐 企业代理环境配置
+
+如果您在企业内网环境中使用本插件，需要配置 IDEA 的代理设置以访问 AI 提供商的 API。
+
+### 配置步骤
+
+1. **打开 IDEA 代理设置**
+   - 路径：`File` → `Settings` → `Appearance & Behavior` → `System Settings` → `HTTP Proxy`
+
+2. **选择代理模式**
+
+   **方式 1：自动检测（推荐）**
+   - 选择 **"Auto-detect proxy settings"**
+   - IDEA 会自动使用系统代理配置
+   - 适合大多数企业环境
+
+   **方式 2：手动配置**
+   - 选择 **"Manual proxy configuration"**
+   - 填入代理信息：
+     ```
+     Host: xx.xxx.xx.xxx
+     Port: xxxx
+     ```
+   - 如果需要认证：
+     - 勾选 **"Proxy authentication"**
+     - 填入用户名和密码
+
+3. **测试连接**
+   - 点击 **"Check connection"** 按钮
+   - 输入测试 URL（如 `https://api.openai.com`）
+   - 确认连接成功
+
+4. **应用设置**
+   - 点击 **"Apply"** 和 **"OK"**
+   - **重启 IDEA**（重要！）
+
+### 常见问题
+
+**Q: 配置代理后仍无法连接？**
+- 确认代理服务器地址和端口正确
+- 检查用户名密码是否正确
+- 联系 IT 部门确认代理配置
+- 尝试关闭 SSL 证书验证（设置中的 "Trust all certificates"）
+
+**Q: 只有部分 AI 提供商需要代理吗？**
+- 国外 AI（OpenAI、Claude、Azure）通常需要代理
+- 国内 AI（智谱、DeepSeek、阿里通义）通常不需要代理
+- 本地 Ollama 完全不需要网络
+
+**Q: 代理配置会影响其他功能吗？**
+- 代理配置是 IDEA 全局的
+- 会影响所有需要网络的插件和功能
+- 建议与 IT 部门确认企业代理策略
+
+---
+
 ## 🔧 故障排除
 
 ### 问题 1：AI 生成失败

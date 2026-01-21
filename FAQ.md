@@ -498,11 +498,79 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 - `Help` → `Show Log in Finder` (macOS)
 - `Help` → `Show Log in Explorer` (Windows/Linux)
 
+### Q29: 企业内网环境如何配置代理？
+
+**A**: 如果您在企业内网，需要配置 IDEA 代理来访问外部 AI 服务。
+
+**配置步骤**：
+
+1. **打开代理设置**
+   - `File` → `Settings` → `Appearance & Behavior` → `System Settings` → `HTTP Proxy`
+
+2. **选择代理模式**
+
+   **方式 1：自动检测（推荐）**
+   - 选择 **"Auto-detect proxy settings"**
+   - IDEA 会自动使用系统代理配置
+
+   **方式 2：手动配置**
+   - 选择 **"Manual proxy configuration"**
+   - 填入代理信息：
+     ```
+     Host: xx.xxx.xx.xxx
+     Port: xxxx
+     ```
+   - 如果需要认证：
+     - 勾选 **"Proxy authentication"**
+     - 填入用户名和密码
+
+3. **测试并应用**
+   - 点击 **"Check connection"** 测试连接
+   - 输入测试 URL（如 `https://api.openai.com`）
+   - 点击 **"Apply"** 和 **"OK"**
+   - **重启 IDEA**（重要！）
+
+**注意事项**：
+- 国内 AI（智谱、DeepSeek、阿里通义）通常不需要代理
+- 国外 AI（OpenAI、Claude、Azure）在国内通常需要代理
+- 本地 Ollama 完全不需要网络
+- 如遇问题，联系 IT 部门确认企业代理配置
+
+### Q30: 配置代理后仍然无法连接 AI 服务？
+
+**A**: 尝试以下排查步骤：
+
+1. **检查代理配置**
+   - 确认 Host 和 Port 正确
+   - 确认用户名密码正确（如需要认证）
+   - 联系 IT 部门核实代理地址
+
+2. **测试代理连接**
+   - 在代理设置中点击 "Check connection"
+   - 使用目标 API 地址测试（如 `https://api.openai.com`）
+
+3. **检查 SSL 证书**
+   - 企业代理可能拦截 HTTPS 请求
+   - 在插件设置中勾选 **"Trust all certificates"**（仅用于开发环境）
+
+4. **尝试直连测试**
+   - 暂时关闭代理
+   - 使用手机热点测试是否为代理问题
+
+5. **查看详细日志**
+   - `Help` → `Show Log in Finder/Explorer`
+   - 搜索 "Connection" 或 "Proxy" 相关错误
+
+6. **使用国内 AI**
+   - 如代理问题无法解决
+   - 考虑切换到国内 AI 提供商（智谱、DeepSeek、阿里通义）
+   - 或使用本地 Ollama 完全离线工作
+
 ---
 
 ## 性能与优化
 
-### Q29: 插件会拖慢 IDEA 吗？
+### Q31: 插件会拖慢 IDEA 吗？
 
 **A**: **不会**。
 
@@ -511,7 +579,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 - 内存占用小（< 10MB）
 - 规则分析模式响应极快（< 1 秒）
 
-### Q30: AI 模式生成需要多久？
+### Q32: AI 模式生成需要多久？
 
 **A**: 取决于 AI 提供商：
 
@@ -525,7 +593,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 | 阿里通义 | 3-7 秒 | 95%+ | 高 |
 | Ollama (本地) | 5-15 秒 | 99%+ | 中高 |
 
-### Q31: 如何加快生成速度？
+### Q33: 如何加快生成速度？
 
 **A**: 优化方法：
 
@@ -548,7 +616,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
    - 减少到 100-200
    - 提交信息通常不需要太多 tokens
 
-### Q32: 插件会收集我的代码吗？
+### Q34: 插件会收集我的代码吗？
 
 **A**: **不会**。
 
@@ -568,7 +636,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 
 ## 其他问题
 
-### Q33: 插件是开源的吗？
+### Q35: 插件是开源的吗？
 
 **A**: **是的**。
 
@@ -576,7 +644,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 - License: MIT
 - 欢迎贡献代码和反馈问题
 
-### Q34: 如何报告 Bug 或提出建议？
+### Q36: 如何报告 Bug 或提出建议？
 
 **A**:
 
@@ -593,7 +661,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 1. 访问 [GitHub Discussions](https://github.com/yourusername/Git.Commit.Message.Helper/discussions)
 2. 描述你的需求和使用场景
 
-### Q35: 插件支持其他 JetBrains IDE 吗？
+### Q37: 插件支持其他 JetBrains IDE 吗？
 
 **A**: 目前仅支持 IntelliJ IDEA。
 
@@ -604,7 +672,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 
 欢迎在 GitHub 投票支持你需要的 IDE。
 
-### Q36: 可以自定义提交类型吗？
+### Q38: 可以自定义提交类型吗？
 
 **A**: **可以**。
 
@@ -616,7 +684,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 
 自定义类型会在生成和验证时被识别。
 
-### Q37: 插件有快捷键吗？
+### Q39: 插件有快捷键吗？
 
 **A**: 当前版本没有独立快捷键。
 
@@ -627,7 +695,7 @@ tail -f ~/.IntelliJIdea2024.1/system/log/idea.log
 **计划中**：
 - 下个版本可能添加快捷键配置
 
-### Q38: 如何卸载插件？
+### Q40: 如何卸载插件？
 
 **A**:
 

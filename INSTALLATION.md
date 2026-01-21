@@ -55,6 +55,30 @@
 5. 点击 "Test Connection" 验证
 6. 点击 "Apply" 保存
 
+### 企业代理环境配置（可选）
+
+如果您在企业内网环境中，访问外部 AI 服务需要配置代理：
+
+1. **打开 IDEA 代理设置**
+   - `File` → `Settings` → `Appearance & Behavior` → `System Settings` → `HTTP Proxy`
+
+2. **配置代理**
+   - 选择 **"Auto-detect proxy settings"**（推荐）
+   - 或选择 **"Manual proxy configuration"** 并填入：
+     - Host: `xx.xxx.xx.xxx`
+     - Port: `xxxx`
+   - 如果需要认证，勾选 **"Proxy authentication"** 并填入用户名密码
+
+3. **测试并应用**
+   - 点击 **"Check connection"** 测试
+   - 点击 **"Apply"** 保存
+   - **重启 IDEA**
+
+**注意**：
+- 国内 AI（智谱、DeepSeek、阿里通义）通常不需要代理
+- 国外 AI（OpenAI、Claude、Azure）在国内通常需要代理
+- 本地 Ollama 完全不需要网络
+
 ## 使用指南
 
 ### 生成提交信息
