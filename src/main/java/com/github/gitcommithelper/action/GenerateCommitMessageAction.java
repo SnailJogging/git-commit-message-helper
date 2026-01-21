@@ -51,8 +51,23 @@ public class GenerateCommitMessageAction extends AnAction {
         // Try to get changes from refreshable panel
         if (refreshable instanceof CheckinProjectPanel) {
             CheckinProjectPanel checkinPanel = (CheckinProjectPanel) refreshable;
-            selectedChanges = checkinPanel.getSelectedChanges();
-            LOG.info("Found " + (selectedChanges != null ? selectedChanges.size() : 0) + " selected changes from checkin panel");
+            Collection<Change> panelChanges = checkinPanel.getSelectedChanges();
+
+            // Only use selected changes if at least one file is selected
+            // If the collection is empty (no files checked), treat it as null to analyze all changes
+            if (panelChanges != null && !panelChanges.isEmpty()) {
+                selectedChanges = panelChanges;
+                LOG.info("Found " + selectedChanges.size() + " selected changes from checkin panel");
+            } else {
+                LOG.info("No files selected, will prompt user");
+                // Show warning that no files are selected
+                Messages.showWarningDialog(
+                    project,
+                    "请至少选择一个要提交的文件。\nPlease select at least one file to commit.",
+                    "No Files Selected"
+                );
+                return;
+            }
         }
 
         final Collection<Change> finalSelectedChanges = selectedChanges;

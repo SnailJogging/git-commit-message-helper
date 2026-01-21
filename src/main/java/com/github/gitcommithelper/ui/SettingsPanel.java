@@ -158,6 +158,9 @@ public class SettingsPanel {
         JPanel apiKeyPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         apiKeyPanel.add(new JLabel("API Key:"));
         apiKeyField = new JPasswordField(30);
+        // Set explicit width to ensure consistent display across different IDEA versions
+        apiKeyField.setPreferredSize(new Dimension(400, apiKeyField.getPreferredSize().height));
+        apiKeyField.setMinimumSize(new Dimension(400, apiKeyField.getPreferredSize().height));
         apiKeyField.getDocument().addDocumentListener(createDocumentListener());
         apiKeyPanel.add(apiKeyField);
 
