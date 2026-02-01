@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.gitcommithelper</id>
     <name>Git Commit Message Helper</name>
-    <vendor email="support@example.com" url="https://github.com/yourusername/git-commit-message-helper">Your Name</vendor>
+    <vendor email="SnailJogging@users.noreply.github.com" url="https://github.com/SnailJogging/git-commit-message-helper">SnailJogging</vendor>
 
     <description><![CDATA[
     <p>A smart Git commit message helper with AI enhancement that assists developers in writing standardized commit messages.</p>
